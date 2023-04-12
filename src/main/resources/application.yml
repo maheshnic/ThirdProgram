@@ -8,3 +8,20 @@ server:
 spring:
   datasource:
     url: jdbc:h2:mem:testdb
+  profiles:
+    active:
+      - localmysql
+
+# To Generate Database Schema
+#  jpa:
+#    properties:
+#      jakarta:
+#        persistence:
+#          schema-generation:
+#            scripts:
+#              action: drop-and-create
+#              create-source: metadata
+#              drop-target: drop-and-create.sql
+#              create-target: drop-and-create.sql
+
+
