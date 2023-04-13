@@ -20,8 +20,6 @@ spring:
         elideSetAutoCommits: true
         maintainTimeStats: false
 
-
-
   jpa:
     database: mysql
     hibernate:
