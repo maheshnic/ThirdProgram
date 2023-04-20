@@ -1,18 +1,23 @@
 package com.mahesh.repositories;
 
+import com.mahesh.bootstrap.BootstrapData;
 import com.mahesh.dto.BeerStyle;
 import com.mahesh.entities.Beer;
+import com.mahesh.service.BeerCsvServiceImpl;
 import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DataJpaTest
+@Import({BootstrapData.class, BeerCsvServiceImpl.class})
 class BeerRepositoryTest {
 
     @Autowired
@@ -46,6 +51,13 @@ class BeerRepositoryTest {
 
             beerRepository.flush();
         });
+    }
+
+    @Test
+    void testGetBeerByName(){
+        List<Beer> list = beerRepository.findAllByBeerNameIsLikeIgnoreCase("%IPA%");
+
+        assertThat(list.size()).isEqualTo(336);
     }
 
 }

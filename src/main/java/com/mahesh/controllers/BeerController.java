@@ -3,6 +3,7 @@ package com.mahesh.controllers;
 import java.util.List;
 import java.util.UUID;
 
+import com.mahesh.dto.BeerStyle;
 import com.mahesh.exception.NotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpHeaders;
@@ -28,8 +29,10 @@ public class BeerController {
     private final BeerService beerService;
 
     @GetMapping(BEER_PATH)
-    public List<BeerDTO> listBeers(@RequestParam(required = false) String beerName){
-        return beerService.listBeers(beerName);
+    public List<BeerDTO> listBeers(@RequestParam(required = false) String beerName,
+                                   @RequestParam(required = false) BeerStyle beerStyle,
+                                   @RequestParam(required = false) Boolean showInventory){
+        return beerService.listBeers(beerName, beerStyle, showInventory);
     }
 
     @GetMapping(BEER_PATH_ID)
