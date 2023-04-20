@@ -19,6 +19,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -63,9 +64,9 @@ class BeerControllerIT {
 	@Test
 	void testListBeers() {
 
-		List<BeerDTO> dtos = beerController.listBeers(null, null, false);
+		Page<BeerDTO> dtos = beerController.listBeers(null, null, false, 1, 2413);
 
-		assertThat(dtos.size()).isEqualTo(2413);
+		assertThat(dtos.getContent().size()).isEqualTo(1000);
 	}
 
 	@Rollback
@@ -73,9 +74,9 @@ class BeerControllerIT {
 	@Test
 	void testEmptyList() {
 		beerRepository.deleteAll();
-		List<BeerDTO> dtos = beerController.listBeers(null, null, false);
+		Page<BeerDTO> dtos = beerController.listBeers(null, null, false, 1, 25);
 
-		assertThat(dtos.size()).isEqualTo(0);
+		assertThat(dtos.getContent().size()).isEqualTo(0);
 	}
 
 	@Test
@@ -194,16 +195,30 @@ class BeerControllerIT {
 
 	@Test
 	void testListBeersByName() throws Exception {
-		mockMvc.perform(get(BeerController.BEER_PATH).queryParam("beerName", "IPA")).andExpect(status().isOk())
-				.andExpect(jsonPath("$.size()", is(336)));
+		mockMvc.perform(get(BeerController.BEER_PATH)
+						.queryParam("beerName", "IPA")
+						.queryParam("pageSize", "800"))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.content.size()", is(336)));
 	}
 
 	@Test
 	void testListBeersByBeerStyle() throws Exception {
 		mockMvc.perform(get(BeerController.BEER_PATH)
-				.queryParam("beerStyle", BeerStyle.IPA.name()))
+						.queryParam("beerStyle", BeerStyle.IPA.name())
+						.queryParam("pageSize", "800"))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.size()", is(548)));
+				.andExpect(jsonPath("$.content.size()", is(548)));
+	}
+
+	@Test
+	void testListBeerByNameAndStyle() throws Exception {
+		mockMvc.perform(get(BeerController.BEER_PATH)
+				.queryParam("beerName", "IPA")
+				.queryParam("beerStyle", BeerStyle.IPA.name())
+				.queryParam("pageSize", "800"))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.content.size()", is(310)));
 	}
 
 	@Test
@@ -211,10 +226,11 @@ class BeerControllerIT {
 		mockMvc.perform(get(BeerController.BEER_PATH)
 						.queryParam("beerName", "IPA")
 						.queryParam("beerStyle", BeerStyle.IPA.name())
-						.queryParam("showInventory", "false"))
+						.queryParam("showInventory", "false")
+						.queryParam("pageSize", "800"))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.size()", is(310)))
-				.andExpect(jsonPath("$.[0].quantityOnHand").value(IsNull.nullValue()));
+				.andExpect(jsonPath("$.content.size()", is(310)))
+				.andExpect(jsonPath("$.content[0].quantityOnHand").value(IsNull.nullValue()));
 	}
 
 	@Test
@@ -222,9 +238,23 @@ class BeerControllerIT {
 		mockMvc.perform(get(BeerController.BEER_PATH)
 						.queryParam("beerName", "IPA")
 						.queryParam("beerStyle", BeerStyle.IPA.name())
-						.queryParam("showInventory", "true"))
+						.queryParam("showInventory", "true")
+						.queryParam("pageSize", "800"))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.size()", is(310)))
-				.andExpect(jsonPath("$.[0].quantityOnHand").value(IsNull.notNullValue()));
+				.andExpect(jsonPath("$.content.size()", is(310)))
+				.andExpect(jsonPath("$.content[0].quantityOnHand").value(IsNull.notNullValue()));
+	}
+
+	@Test
+	void testListBeersByBeerNameAndStyleShowInventoryTruePage2() throws Exception {
+		mockMvc.perform(get(BeerController.BEER_PATH)
+						.queryParam("beerName", "IPA")
+						.queryParam("beerStyle", BeerStyle.IPA.name())
+						.queryParam("showInventory", "true")
+						.queryParam("pageNumber", "2")
+						.queryParam("pageSize", "50"))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.content.size()", is(50)))
+				.andExpect(jsonPath("$.content[0].quantityOnHand").value(IsNull.notNullValue()));
 	}
 }
