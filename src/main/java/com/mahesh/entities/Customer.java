@@ -5,6 +5,8 @@ import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Getter
@@ -26,4 +28,8 @@ public class Customer {
     private Integer version;
     private LocalDateTime createdDate;
     private LocalDateTime lastModifiedDate;
+
+    @Builder.Default
+    @OneToMany(mappedBy = "customer")
+    private Set<BeerOrder> beerOrders = new HashSet<>();
 }
