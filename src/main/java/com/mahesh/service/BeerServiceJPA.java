@@ -14,11 +14,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Collectors;
 
 @Service
 @Primary
@@ -112,12 +110,17 @@ public class BeerServiceJPA implements BeerService {
             foundBeer.setBeerStyle(beer.getBeerStyle());
             foundBeer.setUpc(beer.getUpc());
             foundBeer.setPrice(beer.getPrice());
+            foundBeer.setQuantityOnHand(beer.getQuantityOnHand());
+            foundBeer.setVersion(beer.getVersion());
             atomicReference.set(Optional.of(beerMapper.beerToBeerDto(beerRepository.save(foundBeer))));
         }, () -> {
             atomicReference.set(Optional.empty());
         });
 
         return atomicReference.get();
+
+//        return Optional.of(beerMapper.beerToBeerDto(
+//                beerRepository.save(beerMapper.beerDtoToBeer(beer))));
     }
 
     @Override
