@@ -66,15 +66,15 @@ public class BeerServiceJPA implements BeerService {
             queryPageNumber = DEFAULT_PAGE;
         }
 
-        if (pageSize != null && pageSize > 0) {
-            queryPageSize = pageSize;
-        } else {
-            if (pageSize > 1000) {
-                queryPageSize = 1000;
-            } else {
-                queryPageSize = pageSize;
-            }
-        }
+        if (pageSize == null) {
+			queryPageSize = DEFAULT_PAGE_SIZE;
+		} else {
+			if (pageSize > 1000) {
+				queryPageSize = 1000;
+			} else {
+				queryPageSize = pageSize;
+			}
+		}
 
         Sort sort = Sort.by(Sort.Order.asc("beerName"));
 
