@@ -191,7 +191,7 @@ class BeerControllerIT {
                 "New Name 01234567890123456789012345678901234567890123456789012345678901234567890123456789");
 
         mockMvc.perform(patch(BeerController.BEER_PATH_ID, beer.getId())
-                        .with(httpBasic(BeerControllerTest.USERNAME, BeerControllerTest.PASSWORD))
+                        .with(BeerControllerTest.jwtRequestPostProcessor)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(beerMap)))
@@ -203,7 +203,7 @@ class BeerControllerIT {
         mockMvc.perform(get(BeerController.BEER_PATH)
                         .queryParam("beerName", "IPA")
                         .queryParam("pageSize", "800")
-                        .with(httpBasic(BeerControllerTest.USERNAME, BeerControllerTest.PASSWORD)))
+                        .with(BeerControllerTest.jwtRequestPostProcessor))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content.size()", is(336)));
     }
@@ -213,7 +213,7 @@ class BeerControllerIT {
         mockMvc.perform(get(BeerController.BEER_PATH)
                         .queryParam("beerStyle", BeerStyle.IPA.name())
                         .queryParam("pageSize", "800")
-                        .with(httpBasic(BeerControllerTest.USERNAME, BeerControllerTest.PASSWORD)))
+                        .with(BeerControllerTest.jwtRequestPostProcessor))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content.size()", is(548)));
     }
@@ -224,7 +224,7 @@ class BeerControllerIT {
                         .queryParam("beerName", "IPA")
                         .queryParam("beerStyle", BeerStyle.IPA.name())
                         .queryParam("pageSize", "800")
-                        .with(httpBasic(BeerControllerTest.USERNAME, BeerControllerTest.PASSWORD)))
+                        .with(BeerControllerTest.jwtRequestPostProcessor))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content.size()", is(310)));
     }
@@ -236,7 +236,7 @@ class BeerControllerIT {
                         .queryParam("beerStyle", BeerStyle.IPA.name())
                         .queryParam("showInventory", "false")
                         .queryParam("pageSize", "800")
-                        .with(httpBasic(BeerControllerTest.USERNAME, BeerControllerTest.PASSWORD)))
+                        .with(BeerControllerTest.jwtRequestPostProcessor))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content.size()", is(310)))
                 .andExpect(jsonPath("$.content[0].quantityOnHand").value(IsNull.nullValue()));
@@ -249,7 +249,7 @@ class BeerControllerIT {
                         .queryParam("beerStyle", BeerStyle.IPA.name())
                         .queryParam("showInventory", "true")
                         .queryParam("pageSize", "800")
-                        .with(httpBasic(BeerControllerTest.USERNAME, BeerControllerTest.PASSWORD)))
+                        .with(BeerControllerTest.jwtRequestPostProcessor))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content.size()", is(310)))
                 .andExpect(jsonPath("$.content[0].quantityOnHand").value(IsNull.notNullValue()));
@@ -263,7 +263,7 @@ class BeerControllerIT {
                         .queryParam("showInventory", "true")
                         .queryParam("pageNumber", "2")
                         .queryParam("pageSize", "50")
-                        .with(httpBasic(BeerControllerTest.USERNAME, BeerControllerTest.PASSWORD)))
+                        .with(BeerControllerTest.jwtRequestPostProcessor))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content.size()", is(50)))
                 .andExpect(jsonPath("$.content[0].quantityOnHand").value(IsNull.notNullValue()));
@@ -280,7 +280,7 @@ class BeerControllerIT {
 
         MvcResult result = mockMvc
                 .perform(put(BeerController.BEER_PATH_ID, beer.getId())
-                        .with(httpBasic(BeerControllerTest.USERNAME, BeerControllerTest.PASSWORD))
+                        .with(BeerControllerTest.jwtRequestPostProcessor)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(beerDTO)))
@@ -292,7 +292,7 @@ class BeerControllerIT {
 
         MvcResult result2 = mockMvc
                 .perform(put(BeerController.BEER_PATH_ID, beer.getId())
-                        .with(httpBasic(BeerControllerTest.USERNAME, BeerControllerTest.PASSWORD))
+                        .with(BeerControllerTest.jwtRequestPostProcessor)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(beerDTO)))
